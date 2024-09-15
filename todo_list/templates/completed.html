@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Completed Tasks</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round|Open+Sans"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link
+      href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
+      rel="stylesheet"
+      id="bootstrap-css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+      body {
+        color: #404e67;
+        background: #f5f7fa;
+        font-family: "Open Sans", sans-serif;
+      }
+      .border {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-icon-top navbar-expand-xl navbar-dark bg-dark">
+      <a class="navbar-brand" href="#"><b>PLAN.IT</b></a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="{%url 'index'%}">
+              <i class="fa fa-home"></i>
+              Home
+              <span class="sr-only">(current)</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{%url 'all_tasks'%}">
+              <i class="fa fa-tasks"> </i>
+              AllTask
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href={%url 'completed'%}>
+              <i class="fa fa-arrow-circle-right"> </i>
+              Completed
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href={%url 'week'%}>
+              <i class="fa fa-envelope-o"> </i>
+              Weekly
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href={%url 'month'%}>
+              <i class="fa fa-calendar-o"> </i>
+              Monthly
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href={%url 'teamdash'%}>
+                  <i class="fa-solid fa-user-group"></i>
+                  Team Dashboard
+            </a>
+          </li>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href={%url 'user'%}>
+              <i class="fa fa-user"> </i>
+              Profile
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href={%url 'team'%}>
+              <i class="fa-solid fa-people-group"></i>
+              Teams
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">
+              <i class="fa fa-sign-out"> </i>
+              Sign Out
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <br /><br />
+    <div style="font-size: 34px; font-weight: bold; text-align: center">
+      Completed Tasks
+    </div>
+    <div class="container pt-4">
+      <div class="row p-0 mt-4">
+        <div class="col">
+          <div class="border">
+            {% if completed_tasks|length == 0 %}
+            <div class="p-4">
+              <br />
+              <br />
+              <div class="alert alert-info text-center">
+                <p class="" style="font-size: 30px">No task completed yet</p>
+              </div>
+              <br />
+              <br />
+            </div>
+            {% else %}
+            <div>
+              <input
+                type="text"
+                id="searchInput"
+                onkeyup="searchTasks()"
+                placeholder="Search for task names.."
+                class="form-control mb-3"
+              />
+              <table class="table" id="taskTable">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Priority was</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {% for task in completed_tasks %}
+                  <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ task.task_name }}</td>
+                    <td>✅ - completed</td>
+                    <td>{{ task.priority }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function searchTasks() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("searchInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("taskTable");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+          td = tr[i].getElementsByTagName("td")[1]; // Index 1 is for the task name column
+          if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              tr[i].style.display = "";
+            } else {
+              tr[i].style.display = "none";
+            }
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
